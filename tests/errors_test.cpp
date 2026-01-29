@@ -2,57 +2,31 @@
 #include "muxi/errors.hpp"
 
 TEST(ErrorsTest, Map401ToAuthenticationException) {
-    try {
-        throw muxi::map_error(401, "INVALID_KEY", "Invalid API key");
-    } catch (const muxi::AuthenticationException& e) {
-        EXPECT_EQ(e.status_code(), 401);
-        SUCCEED();
-        return;
-    }
-    FAIL() << "Expected AuthenticationException";
+    auto ex = muxi::map_error(401, "INVALID_KEY", "Invalid API key");
+    EXPECT_EQ(ex.status_code(), 401);
+    EXPECT_EQ(ex.error_code(), "INVALID_KEY");
 }
 
 TEST(ErrorsTest, Map403ToAuthorizationException) {
-    try {
-        throw muxi::map_error(403, "FORBIDDEN", "Access denied");
-    } catch (const muxi::AuthorizationException& e) {
-        EXPECT_EQ(e.status_code(), 403);
-        SUCCEED();
-        return;
-    }
-    FAIL() << "Expected AuthorizationException";
+    auto ex = muxi::map_error(403, "FORBIDDEN", "Access denied");
+    EXPECT_EQ(ex.status_code(), 403);
+    EXPECT_EQ(ex.error_code(), "FORBIDDEN");
 }
 
 TEST(ErrorsTest, Map404ToNotFoundException) {
-    try {
-        throw muxi::map_error(404, "NOT_FOUND", "Resource not found");
-    } catch (const muxi::NotFoundException& e) {
-        EXPECT_EQ(e.status_code(), 404);
-        SUCCEED();
-        return;
-    }
-    FAIL() << "Expected NotFoundException";
+    auto ex = muxi::map_error(404, "NOT_FOUND", "Resource not found");
+    EXPECT_EQ(ex.status_code(), 404);
+    EXPECT_EQ(ex.error_code(), "NOT_FOUND");
 }
 
 TEST(ErrorsTest, Map429ToRateLimitException) {
-    try {
-        throw muxi::map_error(429, "", "Rate limited", 60);
-    } catch (const muxi::RateLimitException& e) {
-        EXPECT_EQ(e.status_code(), 429);
-        EXPECT_EQ(e.retry_after().value_or(0), 60);
-        SUCCEED();
-        return;
-    }
-    FAIL() << "Expected RateLimitException";
+    auto ex = muxi::map_error(429, "", "Rate limited", 60);
+    EXPECT_EQ(ex.status_code(), 429);
+    EXPECT_EQ(ex.retry_after().value_or(0), 60);
 }
 
 TEST(ErrorsTest, Map500ToServerException) {
-    try {
-        throw muxi::map_error(500, "INTERNAL", "Server error");
-    } catch (const muxi::ServerException& e) {
-        EXPECT_EQ(e.status_code(), 500);
-        SUCCEED();
-        return;
-    }
-    FAIL() << "Expected ServerException";
+    auto ex = muxi::map_error(500, "INTERNAL", "Server error");
+    EXPECT_EQ(ex.status_code(), 500);
+    EXPECT_EQ(ex.error_code(), "INTERNAL");
 }

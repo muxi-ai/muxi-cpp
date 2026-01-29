@@ -1,0 +1,5 @@
+if(EXISTS "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests[1]_tests.cmake")
+  include("/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests[1]_tests.cmake")
+else()
+  add_test(muxi_tests_NOT_BUILT muxi_tests_NOT_BUILT)
+endif()

@@ -1,0 +1,381 @@
+Start testing: Jan 29 22:19 GMT
+----------------------------------------------------------
+1/14 Testing: AuthTest.GenerateHmacSignature
+1/14 Test: AuthTest.GenerateHmacSignature
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=AuthTest.GenerateHmacSignature" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"AuthTest.GenerateHmacSignature" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = AuthTest.GenerateHmacSignature
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from AuthTest
+[ RUN      ] AuthTest.GenerateHmacSignature
+[       OK ] AuthTest.GenerateHmacSignature (9 ms)
+[----------] 1 test from AuthTest (9 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (9 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"AuthTest.GenerateHmacSignature" end time: Jan 29 22:19 GMT
+"AuthTest.GenerateHmacSignature" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/14 Testing: AuthTest.BuildAuthHeader
+2/14 Test: AuthTest.BuildAuthHeader
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=AuthTest.BuildAuthHeader" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"AuthTest.BuildAuthHeader" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = AuthTest.BuildAuthHeader
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from AuthTest
+[ RUN      ] AuthTest.BuildAuthHeader
+[       OK ] AuthTest.BuildAuthHeader (0 ms)
+[----------] 1 test from AuthTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"AuthTest.BuildAuthHeader" end time: Jan 29 22:19 GMT
+"AuthTest.BuildAuthHeader" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/14 Testing: AuthTest.SignatureStripsQueryParams
+3/14 Test: AuthTest.SignatureStripsQueryParams
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=AuthTest.SignatureStripsQueryParams" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"AuthTest.SignatureStripsQueryParams" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = AuthTest.SignatureStripsQueryParams
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from AuthTest
+[ RUN      ] AuthTest.SignatureStripsQueryParams
+[       OK ] AuthTest.SignatureStripsQueryParams (0 ms)
+[----------] 1 test from AuthTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"AuthTest.SignatureStripsQueryParams" end time: Jan 29 22:19 GMT
+"AuthTest.SignatureStripsQueryParams" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/14 Testing: WebhookTest.VerifySignatureMissingSecret
+4/14 Test: WebhookTest.VerifySignatureMissingSecret
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=WebhookTest.VerifySignatureMissingSecret" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"WebhookTest.VerifySignatureMissingSecret" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = WebhookTest.VerifySignatureMissingSecret
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WebhookTest
+[ RUN      ] WebhookTest.VerifySignatureMissingSecret
+[       OK ] WebhookTest.VerifySignatureMissingSecret (0 ms)
+[----------] 1 test from WebhookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"WebhookTest.VerifySignatureMissingSecret" end time: Jan 29 22:19 GMT
+"WebhookTest.VerifySignatureMissingSecret" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/14 Testing: WebhookTest.VerifySignatureEmptyHeader
+5/14 Test: WebhookTest.VerifySignatureEmptyHeader
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=WebhookTest.VerifySignatureEmptyHeader" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"WebhookTest.VerifySignatureEmptyHeader" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = WebhookTest.VerifySignatureEmptyHeader
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WebhookTest
+[ RUN      ] WebhookTest.VerifySignatureEmptyHeader
+[       OK ] WebhookTest.VerifySignatureEmptyHeader (0 ms)
+[----------] 1 test from WebhookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"WebhookTest.VerifySignatureEmptyHeader" end time: Jan 29 22:19 GMT
+"WebhookTest.VerifySignatureEmptyHeader" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/14 Testing: WebhookTest.VerifySignatureInvalidSignature
+6/14 Test: WebhookTest.VerifySignatureInvalidSignature
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=WebhookTest.VerifySignatureInvalidSignature" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"WebhookTest.VerifySignatureInvalidSignature" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = WebhookTest.VerifySignatureInvalidSignature
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WebhookTest
+[ RUN      ] WebhookTest.VerifySignatureInvalidSignature
+[       OK ] WebhookTest.VerifySignatureInvalidSignature (1 ms)
+[----------] 1 test from WebhookTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"WebhookTest.VerifySignatureInvalidSignature" end time: Jan 29 22:19 GMT
+"WebhookTest.VerifySignatureInvalidSignature" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/14 Testing: WebhookTest.ParseCompletedPayload
+7/14 Test: WebhookTest.ParseCompletedPayload
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=WebhookTest.ParseCompletedPayload" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"WebhookTest.ParseCompletedPayload" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = WebhookTest.ParseCompletedPayload
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WebhookTest
+[ RUN      ] WebhookTest.ParseCompletedPayload
+[       OK ] WebhookTest.ParseCompletedPayload (0 ms)
+[----------] 1 test from WebhookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"WebhookTest.ParseCompletedPayload" end time: Jan 29 22:19 GMT
+"WebhookTest.ParseCompletedPayload" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/14 Testing: WebhookTest.ParseFailedPayload
+8/14 Test: WebhookTest.ParseFailedPayload
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=WebhookTest.ParseFailedPayload" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"WebhookTest.ParseFailedPayload" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = WebhookTest.ParseFailedPayload
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WebhookTest
+[ RUN      ] WebhookTest.ParseFailedPayload
+[       OK ] WebhookTest.ParseFailedPayload (0 ms)
+[----------] 1 test from WebhookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"WebhookTest.ParseFailedPayload" end time: Jan 29 22:19 GMT
+"WebhookTest.ParseFailedPayload" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/14 Testing: WebhookTest.ParseClarificationPayload
+9/14 Test: WebhookTest.ParseClarificationPayload
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=WebhookTest.ParseClarificationPayload" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"WebhookTest.ParseClarificationPayload" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = WebhookTest.ParseClarificationPayload
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WebhookTest
+[ RUN      ] WebhookTest.ParseClarificationPayload
+[       OK ] WebhookTest.ParseClarificationPayload (0 ms)
+[----------] 1 test from WebhookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"WebhookTest.ParseClarificationPayload" end time: Jan 29 22:19 GMT
+"WebhookTest.ParseClarificationPayload" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/14 Testing: ErrorsTest.Map401ToAuthenticationException
+10/14 Test: ErrorsTest.Map401ToAuthenticationException
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=ErrorsTest.Map401ToAuthenticationException" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"ErrorsTest.Map401ToAuthenticationException" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ErrorsTest.Map401ToAuthenticationException
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ErrorsTest
+[ RUN      ] ErrorsTest.Map401ToAuthenticationException
+[       OK ] ErrorsTest.Map401ToAuthenticationException (0 ms)
+[----------] 1 test from ErrorsTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ErrorsTest.Map401ToAuthenticationException" end time: Jan 29 22:19 GMT
+"ErrorsTest.Map401ToAuthenticationException" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/14 Testing: ErrorsTest.Map403ToAuthorizationException
+11/14 Test: ErrorsTest.Map403ToAuthorizationException
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=ErrorsTest.Map403ToAuthorizationException" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"ErrorsTest.Map403ToAuthorizationException" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ErrorsTest.Map403ToAuthorizationException
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ErrorsTest
+[ RUN      ] ErrorsTest.Map403ToAuthorizationException
+[       OK ] ErrorsTest.Map403ToAuthorizationException (0 ms)
+[----------] 1 test from ErrorsTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ErrorsTest.Map403ToAuthorizationException" end time: Jan 29 22:19 GMT
+"ErrorsTest.Map403ToAuthorizationException" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/14 Testing: ErrorsTest.Map404ToNotFoundException
+12/14 Test: ErrorsTest.Map404ToNotFoundException
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=ErrorsTest.Map404ToNotFoundException" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"ErrorsTest.Map404ToNotFoundException" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ErrorsTest.Map404ToNotFoundException
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ErrorsTest
+[ RUN      ] ErrorsTest.Map404ToNotFoundException
+[       OK ] ErrorsTest.Map404ToNotFoundException (0 ms)
+[----------] 1 test from ErrorsTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ErrorsTest.Map404ToNotFoundException" end time: Jan 29 22:19 GMT
+"ErrorsTest.Map404ToNotFoundException" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/14 Testing: ErrorsTest.Map429ToRateLimitException
+13/14 Test: ErrorsTest.Map429ToRateLimitException
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=ErrorsTest.Map429ToRateLimitException" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"ErrorsTest.Map429ToRateLimitException" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ErrorsTest.Map429ToRateLimitException
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ErrorsTest
+[ RUN      ] ErrorsTest.Map429ToRateLimitException
+[       OK ] ErrorsTest.Map429ToRateLimitException (0 ms)
+[----------] 1 test from ErrorsTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ErrorsTest.Map429ToRateLimitException" end time: Jan 29 22:19 GMT
+"ErrorsTest.Map429ToRateLimitException" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/14 Testing: ErrorsTest.Map500ToServerException
+14/14 Test: ErrorsTest.Map500ToServerException
+Command: "/Users/ran/Projects/muxi/code/sdks/cpp/build/tests/muxi_tests" "--gtest_filter=ErrorsTest.Map500ToServerException" "--gtest_also_run_disabled_tests"
+Directory: /Users/ran/Projects/muxi/code/sdks/cpp/build/tests
+"ErrorsTest.Map500ToServerException" start time: Jan 29 22:19 GMT
+Output:
+----------------------------------------------------------
+Running main() from /Users/ran/Projects/muxi/code/sdks/cpp/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ErrorsTest.Map500ToServerException
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ErrorsTest
+[ RUN      ] ErrorsTest.Map500ToServerException
+[       OK ] ErrorsTest.Map500ToServerException (0 ms)
+[----------] 1 test from ErrorsTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ErrorsTest.Map500ToServerException" end time: Jan 29 22:19 GMT
+"ErrorsTest.Map500ToServerException" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jan 29 22:19 GMT

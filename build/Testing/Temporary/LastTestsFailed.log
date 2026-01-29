@@ -1,0 +1,5 @@
+10:ErrorsTest.Map401ToAuthenticationException
+11:ErrorsTest.Map403ToAuthorizationException
+12:ErrorsTest.Map404ToNotFoundException
+13:ErrorsTest.Map429ToRateLimitException
+14:ErrorsTest.Map500ToServerException

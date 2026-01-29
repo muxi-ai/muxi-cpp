@@ -1,0 +1,94 @@
+{
+  "tests": 14,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "AuthTest",
+      "tests": 3,
+      "testsuite": [
+        {
+          "name": "GenerateHmacSignature",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/auth_test.cpp",
+          "line": 4
+        },
+        {
+          "name": "BuildAuthHeader",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/auth_test.cpp",
+          "line": 10
+        },
+        {
+          "name": "SignatureStripsQueryParams",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/auth_test.cpp",
+          "line": 17
+        }
+      ]
+    },
+    {
+      "name": "WebhookTest",
+      "tests": 6,
+      "testsuite": [
+        {
+          "name": "VerifySignatureMissingSecret",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/webhook_test.cpp",
+          "line": 4
+        },
+        {
+          "name": "VerifySignatureEmptyHeader",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/webhook_test.cpp",
+          "line": 8
+        },
+        {
+          "name": "VerifySignatureInvalidSignature",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/webhook_test.cpp",
+          "line": 12
+        },
+        {
+          "name": "ParseCompletedPayload",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/webhook_test.cpp",
+          "line": 19
+        },
+        {
+          "name": "ParseFailedPayload",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/webhook_test.cpp",
+          "line": 26
+        },
+        {
+          "name": "ParseClarificationPayload",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/webhook_test.cpp",
+          "line": 34
+        }
+      ]
+    },
+    {
+      "name": "ErrorsTest",
+      "tests": 5,
+      "testsuite": [
+        {
+          "name": "Map401ToAuthenticationException",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/errors_test.cpp",
+          "line": 4
+        },
+        {
+          "name": "Map403ToAuthorizationException",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/errors_test.cpp",
+          "line": 10
+        },
+        {
+          "name": "Map404ToNotFoundException",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/errors_test.cpp",
+          "line": 16
+        },
+        {
+          "name": "Map429ToRateLimitException",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/errors_test.cpp",
+          "line": 22
+        },
+        {
+          "name": "Map500ToServerException",
+          "file": "\/Users\/ran\/Projects\/muxi\/code\/sdks\/cpp\/tests\/errors_test.cpp",
+          "line": 28
+        }
+      ]
+    }
+  ]
+}

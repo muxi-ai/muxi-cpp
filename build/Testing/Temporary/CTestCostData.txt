@@ -1,0 +1,15 @@
+AuthTest.GenerateHmacSignature 2 0.00913902
+AuthTest.BuildAuthHeader 2 0.00419877
+AuthTest.SignatureStripsQueryParams 2 0.0047474
+WebhookTest.VerifySignatureMissingSecret 2 0.00419562
+WebhookTest.VerifySignatureEmptyHeader 2 0.00406058
+WebhookTest.VerifySignatureInvalidSignature 2 0.004938
+WebhookTest.ParseCompletedPayload 2 0.00438638
+WebhookTest.ParseFailedPayload 2 0.00443271
+WebhookTest.ParseClarificationPayload 2 0.0044885
+ErrorsTest.Map401ToAuthenticationException 1 0.009011
+ErrorsTest.Map403ToAuthorizationException 1 0.0089865
+ErrorsTest.Map404ToNotFoundException 1 0.00877012
+ErrorsTest.Map429ToRateLimitException 1 0.00896063
+ErrorsTest.Map500ToServerException 1 0.00871742
+---
