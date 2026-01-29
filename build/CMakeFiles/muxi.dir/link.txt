@@ -1,2 +1,0 @@
-/usr/bin/ar qc libmuxi.a CMakeFiles/muxi.dir/src/auth.cpp.o CMakeFiles/muxi.dir/src/transport.cpp.o CMakeFiles/muxi.dir/src/server_client.cpp.o CMakeFiles/muxi.dir/src/formation_client.cpp.o CMakeFiles/muxi.dir/src/errors.cpp.o CMakeFiles/muxi.dir/src/webhook.cpp.o
-/usr/bin/ranlib libmuxi.a
