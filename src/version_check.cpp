@@ -22,9 +22,9 @@ static std::atomic<bool> checked{false};
 static constexpr int64_t TWELVE_HOURS_SECS = 12 * 60 * 60;
 static const std::string SDK_NAME = "cpp";
 
-static bool is_dev_mode() {
-    const char* debug = std::getenv("MUXI_DEBUG");
-    return debug && std::string(debug) == "1";
+static bool notifications_disabled() {
+    const char* val = std::getenv("MUXI_SDK_VERSION_NOTIFICATION");
+    return val && std::string(val) == "0";
 }
 
 static std::string get_home_dir() {
@@ -123,7 +123,7 @@ static void mark_notified() {
 void check_for_updates(const std::unordered_map<std::string, std::string>& headers) {
     bool expected = false;
     if (!checked.compare_exchange_strong(expected, true)) return;
-    if (!is_dev_mode()) return;
+    if (notifications_disabled()) return;
     
     std::string latest;
     auto it = headers.find("X-Muxi-SDK-Latest");
