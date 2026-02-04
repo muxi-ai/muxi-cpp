@@ -1,9 +1,11 @@
 #include "muxi/formation_client.hpp"
 #include "muxi/errors.hpp"
 #include "muxi/version.hpp"
+#include "muxi/version_check.hpp"
 #include <curl/curl.h>
 #include <sstream>
 #include <random>
+#include <unordered_map>
 
 namespace muxi {
 
@@ -27,9 +29,23 @@ static size_t write_callback(void* contents, size_t size, size_t nmemb, std::str
     return size * nmemb;
 }
 
+static size_t header_callback(char* buffer, size_t size, size_t nitems, std::unordered_map<std::string, std::string>* headers) {
+    size_t total = size * nitems;
+    std::string line(buffer, total);
+    size_t colon = line.find(':');
+    if (colon != std::string::npos) {
+        std::string key = line.substr(0, colon);
+        std::string value = line.substr(colon + 1);
+        while (!value.empty() && (value.front() == ' ' || value.front() == '\t')) value.erase(0, 1);
+        while (!value.empty() && (value.back() == '\r' || value.back() == '\n')) value.pop_back();
+        (*headers)[key] = value;
+    }
+    return total;
+}
+
 class FormationClient::Impl {
 public:
-    Impl(const FormationConfig& config) : client_key_(config.client_key), admin_key_(config.admin_key), timeout_(config.timeout) {
+    Impl(const FormationConfig& config) : client_key_(config.client_key), admin_key_(config.admin_key), app_(config.app_), timeout_(config.timeout) {
         if (!config.base_url.empty()) {
             base_url_ = config.base_url;
         } else if (!config.server_url.empty() && !config.formation_id.empty()) {
@@ -48,17 +64,21 @@ public:
         
         std::string url = base_url_ + path;
         std::string response_body;
+        std::unordered_map<std::string, std::string> response_headers;
         
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout_);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_body);
+        curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
+        curl_easy_setopt(curl, CURLOPT_HEADERDATA, &response_headers);
         
         struct curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("X-Muxi-SDK: cpp/" + VERSION).c_str());
         headers = curl_slist_append(headers, ("X-Muxi-Client: cpp/" + VERSION).c_str());
         headers = curl_slist_append(headers, ("X-Muxi-Idempotency-Key: " + generate_uuid()).c_str());
         headers = curl_slist_append(headers, "Accept: application/json");
+        if (!app_.empty()) headers = curl_slist_append(headers, ("X-Muxi-App: " + app_).c_str());
         
         if (use_admin) headers = curl_slist_append(headers, ("X-MUXI-ADMIN-KEY: " + admin_key_).c_str());
         else headers = curl_slist_append(headers, ("X-MUXI-CLIENT-KEY: " + client_key_).c_str());
@@ -81,6 +101,9 @@ public:
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
+        
+        // Check for SDK updates (non-blocking, once per process)
+        internal::check_for_updates(response_headers);
         
         if (res != CURLE_OK) throw ConnectionException(curl_easy_strerror(res));
         if (http_code >= 400) {
@@ -171,6 +194,7 @@ private:
     std::string base_url_;
     std::string client_key_;
     std::string admin_key_;
+    std::string app_;
     int timeout_;
 };
 

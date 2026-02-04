@@ -14,6 +14,7 @@ struct ServerConfig {
     std::string secret_key;
     int timeout = 30;
     int max_retries = 0;
+    std::string app_;  // Internal: for Console telemetry
 };
 
 struct SseEvent {

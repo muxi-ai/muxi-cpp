@@ -23,6 +23,7 @@ add_library(muxi
     src/formation_client.cpp
     src/errors.cpp
     src/webhook.cpp
+    src/version_check.cpp
 )
 
 target_include_directories(muxi

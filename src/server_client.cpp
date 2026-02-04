@@ -2,9 +2,11 @@
 #include "muxi/auth.hpp"
 #include "muxi/errors.hpp"
 #include "muxi/version.hpp"
+#include "muxi/version_check.hpp"
 #include <curl/curl.h>
 #include <sstream>
 #include <random>
+#include <unordered_map>
 
 namespace muxi {
 
@@ -29,11 +31,25 @@ static size_t write_callback(void* contents, size_t size, size_t nmemb, std::str
     return size * nmemb;
 }
 
+static size_t header_callback(char* buffer, size_t size, size_t nitems, std::unordered_map<std::string, std::string>* headers) {
+    size_t total = size * nitems;
+    std::string line(buffer, total);
+    size_t colon = line.find(':');
+    if (colon != std::string::npos) {
+        std::string key = line.substr(0, colon);
+        std::string value = line.substr(colon + 1);
+        while (!value.empty() && (value.front() == ' ' || value.front() == '\t')) value.erase(0, 1);
+        while (!value.empty() && (value.back() == '\r' || value.back() == '\n')) value.pop_back();
+        (*headers)[key] = value;
+    }
+    return total;
+}
+
 class ServerClient::Impl {
 public:
     Impl(const ServerConfig& config) 
         : base_url_(config.url), key_id_(config.key_id), 
-          secret_key_(config.secret_key), timeout_(config.timeout) {
+          secret_key_(config.secret_key), app_(config.app_), timeout_(config.timeout) {
         while (!base_url_.empty() && base_url_.back() == '/') base_url_.pop_back();
         curl_global_init(CURL_GLOBAL_DEFAULT);
     }
@@ -46,17 +62,21 @@ public:
         
         std::string url = base_url_ + path;
         std::string response_body;
+        std::unordered_map<std::string, std::string> response_headers;
         
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout_);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_body);
+        curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
+        curl_easy_setopt(curl, CURLOPT_HEADERDATA, &response_headers);
         
         struct curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("X-Muxi-SDK: cpp/" + VERSION).c_str());
         headers = curl_slist_append(headers, ("X-Muxi-Client: cpp/" + VERSION).c_str());
         headers = curl_slist_append(headers, ("X-Muxi-Idempotency-Key: " + generate_uuid()).c_str());
         headers = curl_slist_append(headers, "Accept: application/json");
+        if (!app_.empty()) headers = curl_slist_append(headers, ("X-Muxi-App: " + app_).c_str());
         
         if (auth) {
             auto [sig, ts] = Auth::generate_hmac_signature(method, path, key_id_, secret_key_);
@@ -82,6 +102,9 @@ public:
         
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
+        
+        // Check for SDK updates (non-blocking, once per process)
+        internal::check_for_updates(response_headers);
         
         if (res != CURLE_OK) throw ConnectionException(curl_easy_strerror(res));
         
@@ -169,6 +192,7 @@ private:
     std::string base_url_;
     std::string key_id_;
     std::string secret_key_;
+    std::string app_;
     int timeout_;
 };
 
