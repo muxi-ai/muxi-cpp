@@ -51,7 +51,8 @@ public:
         } else if (!config.server_url.empty() && !config.formation_id.empty()) {
             base_url_ = config.server_url;
             while (!base_url_.empty() && base_url_.back() == '/') base_url_.pop_back();
-            base_url_ += "/api/" + config.formation_id + "/v1";
+            std::string prefix = (config.mode == "draft") ? "draft" : "api";
+            base_url_ += "/" + prefix + "/" + config.formation_id + "/v1";
         }
         while (!base_url_.empty() && base_url_.back() == '/') base_url_.pop_back();
         curl_global_init(CURL_GLOBAL_DEFAULT);

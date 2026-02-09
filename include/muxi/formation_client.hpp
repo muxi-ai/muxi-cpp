@@ -17,6 +17,7 @@ struct FormationConfig {
     std::string client_key;
     std::string admin_key;
     int timeout = 30;
+    std::string mode = "live";  // "live" (default) or "draft" for local dev
     std::string app_;  // Internal: for Console telemetry
 };
 
