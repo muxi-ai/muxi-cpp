@@ -79,8 +79,7 @@ public:
         if (!app_.empty()) headers = curl_slist_append(headers, ("X-Muxi-App: " + app_).c_str());
         
         if (auth) {
-            auto [sig, ts] = Auth::generate_hmac_signature(method, path, key_id_, secret_key_);
-            headers = curl_slist_append(headers, ("Authorization: " + Auth::build_auth_header(key_id_, sig, ts)).c_str());
+            headers = curl_slist_append(headers, ("Authorization: " + Auth::build_auth_header(key_id_, secret_key_, method, path)).c_str());
         }
         
         std::string body_str;
@@ -138,9 +137,7 @@ public:
         struct curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("X-Muxi-SDK: cpp/" + VERSION).c_str());
         headers = curl_slist_append(headers, "Accept: text/event-stream");
-        
-        auto [sig, ts] = Auth::generate_hmac_signature(method, path, key_id_, secret_key_);
-        headers = curl_slist_append(headers, ("Authorization: " + Auth::build_auth_header(key_id_, sig, ts)).c_str());
+        headers = curl_slist_append(headers, ("Authorization: " + Auth::build_auth_header(key_id_, secret_key_, method, path)).c_str());
         
         std::string body_str;
         if (!body.is_null()) {

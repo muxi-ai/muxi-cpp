@@ -3,7 +3,6 @@
 #include <openssl/evp.h>
 #include <chrono>
 #include <sstream>
-#include <iomanip>
 
 namespace muxi {
 
@@ -26,10 +25,9 @@ static std::string base64_encode(const unsigned char* data, size_t len) {
 }
 
 std::pair<std::string, std::string> Auth::generate_hmac_signature(
+    const std::string& secret_key,
     const std::string& method,
-    const std::string& path,
-    const std::string& key_id,
-    const std::string& secret_key
+    const std::string& path
 ) {
     std::string clean_path = path;
     auto pos = clean_path.find('?');
@@ -40,10 +38,7 @@ std::pair<std::string, std::string> Auth::generate_hmac_signature(
     auto seconds = std::chrono::duration_cast<std::chrono::seconds>(epoch).count();
     std::string timestamp = std::to_string(seconds);
     
-    std::string upper_method = method;
-    for (auto& c : upper_method) c = std::toupper(c);
-    
-    std::string message = upper_method + "\n" + clean_path + "\n" + timestamp;
+    std::string message = timestamp + ";" + method + ";" + clean_path;
     
     unsigned char hash[EVP_MAX_MD_SIZE];
     unsigned int hash_len;
@@ -60,10 +55,12 @@ std::pair<std::string, std::string> Auth::generate_hmac_signature(
 
 std::string Auth::build_auth_header(
     const std::string& key_id,
-    const std::string& signature,
-    const std::string& timestamp
+    const std::string& secret_key,
+    const std::string& method,
+    const std::string& path
 ) {
-    return "MUXI-HMAC-SHA256 Credential=" + key_id + ",Timestamp=" + timestamp + ",Signature=" + signature;
+    auto [signature, timestamp] = generate_hmac_signature(secret_key, method, path);
+    return "MUXI-HMAC key=" + key_id + ", timestamp=" + timestamp + ", signature=" + signature;
 }
 
 } // namespace muxi
