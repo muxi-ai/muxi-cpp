@@ -9,98 +9,70 @@ include(FetchContent)
 FetchContent_Declare(
     muxi
     GIT_REPOSITORY https://github.com/muxi-ai/muxi-cpp.git
-    GIT_TAG main
+    GIT_TAG v0.20260211.0
 )
 FetchContent_MakeAvailable(muxi)
-
 target_link_libraries(your_target PRIVATE muxi)
-```
-
-### Manual Build
-
-```bash
-git clone https://github.com/muxi-ai/muxi-cpp.git
-cd muxi-cpp
-mkdir build && cd build
-cmake ..
-cmake --build .
 ```
 
 ### Dependencies
 
-- libcurl (with SSL support)
-- OpenSSL
-- nlohmann/json (fetched automatically via CMake)
-
-## Quickstart
-
-```cpp
-#include <muxi/muxi.hpp>
-#include <iostream>
-
-int main() {
-    // Server client (management, HMAC auth)
-    muxi::ServerClient server(
-        "https://server.example.com",
-        "<key_id>",
-        "<secret_key>"
-    );
-    std::cout << server.status().dump() << std::endl;
-
-    // Formation client (runtime, key auth)
-    muxi::FormationClient formation(
-        "https://server.example.com",
-        "<formation_id>",
-        "<client_key>",
-        "<admin_key>"
-    );
-    std::cout << formation.health().dump() << std::endl;
-
-    return 0;
-}
-```
+- libcurl (`apt install libcurl4-openssl-dev` or `brew install curl`)
+- OpenSSL (`apt install libssl-dev` or `brew install openssl`)
+- nlohmann/json (`apt install nlohmann-json3-dev` or `brew install nlohmann-json`)
 
 ## Clients
 
-- **ServerClient** (management, HMAC): deploy/list/update formations, server health/status, server logs.
-- **FormationClient** (runtime, client/admin keys): chat/audio (streaming), agents, secrets, MCP, memory, scheduler, sessions/requests, identifiers, credentials, triggers/SOPs/audit, async/A2A/logging config, overlord/LLM settings, events/logs streaming.
+- **ServerClient** (management, HMAC): deploy/list/update formations, server health/status, logs
+- **FormationClient** (runtime, client/admin keys): chat/audio, agents, secrets, MCP, memory, scheduler, sessions, triggers, etc.
 
-## Streaming
+## Quick Start
+
+### ServerClient
 
 ```cpp
 #include <muxi/muxi.hpp>
 
-// Chat streaming
-nlohmann::json request = {{"message", "Tell me a story"}};
+muxi::ServerConfig config;
+config.url = std::getenv("MUXI_SERVER_URL");
+config.key_id = std::getenv("MUXI_KEY_ID");
+config.secret_key = std::getenv("MUXI_SECRET_KEY");
 
-formation.chat_stream(request, "user-123", [](const muxi::SseEvent& event) {
-    if (event.event == "message") {
-        std::cout << event.data << std::endl;
-    }
-});
+muxi::ServerClient server(config);
+auto status = server.status();
+std::cout << status.dump() << std::endl;
+```
 
-// Event streaming
-formation.stream_events("user-123", [](const muxi::SseEvent& event) {
-    std::cout << event.data << std::endl;
-});
+### FormationClient
 
-// Log streaming (admin)
-formation.stream_logs("info", [](const muxi::SseEvent& event) {
-    std::cout << event.data << std::endl;
-});
+```cpp
+#include <muxi/muxi.hpp>
+
+muxi::FormationConfig config;
+config.formation_id = "my-bot";
+config.server_url = std::getenv("MUXI_SERVER_URL");
+config.client_key = std::getenv("MUXI_CLIENT_KEY");
+config.admin_key = std::getenv("MUXI_ADMIN_KEY");
+
+muxi::FormationClient client(config);
+
+nlohmann::json payload = {{"message", "Hello"}};
+auto response = client.chat(payload, "user123");
+std::cout << response.dump() << std::endl;
 ```
 
 ## Auth & Headers
 
-- **ServerClient**: HMAC with `key_id`/`secret_key` on `/rpc` endpoints.
-- **FormationClient**: `X-MUXI-CLIENT-KEY` or `X-MUXI-ADMIN-KEY` on `/api/{formation}/v1`. Override `base_url` for direct access (e.g., `http://localhost:9012/v1`).
-- **Idempotency**: `X-Muxi-Idempotency-Key` auto-generated on every request.
-- **SDK headers**: `X-Muxi-SDK`, `X-Muxi-Client` set automatically.
+- **ServerClient**: HMAC signature (`MUXI-HMAC key=<id>, timestamp=<sec>, signature=<b64>`)
+- **FormationClient**: `X-MUXI-CLIENT-KEY` required; `X-MUXI-ADMIN-KEY` for admin endpoints
+- **Idempotency**: `X-Muxi-Idempotency-Key` auto-generated on every request
+- **SDK Headers**: `X-Muxi-SDK: cpp/{version}`, `X-Muxi-Client: {os}/{arch}`
 
 ## Timeouts & Retries
 
-- Default timeout: 30s (no timeout for streaming).
-- Retries: `max_retries` with exponential backoff on 429/5xx/connection errors; respects `Retry-After`.
+- Default timeout: 30s (configurable)
+- Retries on 429/5xx with exponential backoff
+- Respects `Retry-After` header for rate limits
 
 ## Error Handling
 
@@ -108,79 +80,71 @@ formation.stream_logs("info", [](const muxi::SseEvent& event) {
 #include <muxi/errors.hpp>
 
 try {
-    auto response = formation.chat(request, "user-123");
-} catch (const muxi::AuthenticationException& e) {
-    std::cerr << "Auth failed: " << e.what() << std::endl;
-} catch (const muxi::RateLimitException& e) {
-    std::cerr << "Rate limited. Retry after: " << e.retry_after().value_or(0) << "s" << std::endl;
-} catch (const muxi::NotFoundException& e) {
-    std::cerr << "Not found: " << e.what() << std::endl;
-} catch (const muxi::MuxiException& e) {
-    std::cerr << e.error_code() << ": " << e.what() << " (" << e.status_code() << ")" << std::endl;
-}
+    server.get_formation("nonexistent");
+} catch (const muxi::AuthenticationException& e) { /* 401 */ }
+  catch (const muxi::AuthorizationException& e) { /* 403 */ }
+  catch (const muxi::NotFoundException& e) { /* 404 */ }
+  catch (const muxi::ValidationException& e) { /* 422 */ }
+  catch (const muxi::RateLimitException& e) { /* 429 - check e.retry_after() */ }
+  catch (const muxi::ServerException& e) { /* 5xx */ }
+  catch (const muxi::ConnectionException& e) { /* network error */ }
+  catch (const muxi::MuxiException& e) { /* base exception */ }
 ```
 
-Error types: `AuthenticationException`, `AuthorizationException`, `NotFoundException`, `ValidationException`, `RateLimitException`, `ServerException`, `ConflictException`, `ConnectionException`.
+## Streaming
 
-## Notable Endpoints (FormationClient)
+```cpp
+// Chat streaming with callback
+client.chat_stream(payload, "user123", [](const muxi::SseEvent& event) {
+    std::cout << event.data;
+});
 
-| Category | Methods |
-|----------|---------|
-| Chat/Audio | `chat`, `chat_stream`, `audio_chat`, `audio_chat_stream` |
-| Memory | `get_memory_config`, `get_memories`, `add_memory`, `delete_memory`, `get_user_buffer`, `clear_user_buffer`, `clear_session_buffer`, `clear_all_buffers`, `get_buffer_stats` |
-| Scheduler | `get_scheduler_config`, `get_scheduler_jobs`, `get_scheduler_job`, `create_scheduler_job`, `delete_scheduler_job` |
-| Sessions | `get_sessions`, `get_session`, `get_session_messages`, `restore_session` |
-| Requests | `get_requests`, `get_request_status`, `cancel_request` |
-| Agents/MCP | `get_agents`, `get_agent`, `get_mcp_servers`, `get_mcp_server`, `get_mcp_tools` |
-| Secrets | `get_secrets`, `get_secret`, `set_secret`, `delete_secret` |
-| Credentials | `list_credential_services`, `list_credentials`, `get_credential`, `create_credential`, `delete_credential` |
-| Identifiers | `get_user_identifiers_for_user`, `link_user_identifier`, `unlink_user_identifier` |
-| Triggers/SOP | `get_triggers`, `get_trigger`, `fire_trigger`, `get_sops`, `get_sop` |
-| Audit | `get_audit_log`, `clear_audit_log` |
-| Config | `get_status`, `get_config`, `get_formation_info`, `get_async_config`, `get_a2a_config`, `get_logging_config`, `get_logging_destinations`, `get_overlord_config`, `get_overlord_persona`, `get_llm_settings` |
-| Streaming | `stream_events`, `stream_logs`, `stream_request` |
-| User | `resolve_user` |
+// Deploy with progress
+server.deploy_formation_stream(formation_id, payload, [](const muxi::SseEvent& event) {
+    std::cout << event.event << ": " << event.data << std::endl;
+});
+```
 
 ## Webhook Verification
 
 ```cpp
 #include <muxi/webhook.hpp>
 
-// In your HTTP handler
-void handle_webhook(const std::string& payload, const std::string& signature) {
-    std::string secret = std::getenv("WEBHOOK_SECRET") ? std::getenv("WEBHOOK_SECRET") : "";
+// In your webhook handler
+std::string payload = get_request_body();
+std::string signature = get_header("X-Muxi-Signature");
+std::string secret = std::getenv("WEBHOOK_SECRET");
 
-    if (!muxi::Webhook::verify_signature(payload, signature, secret)) {
-        // Return 401
-        return;
-    }
+if (!muxi::Webhook::verify_signature(payload, signature, secret)) {
+    return http_response(401, "Invalid signature");
+}
 
-    auto event = muxi::Webhook::parse(payload);
+auto event = muxi::Webhook::parse(payload);
 
-    if (event.status == "completed") {
-        for (const auto& item : event.content) {
-            if (item.type == "text") {
-                std::cout << item.text << std::endl;
-            }
-        }
-    } else if (event.status == "failed") {
-        if (event.error) {
-            std::cout << "Error: " << event.error->message << std::endl;
-        }
-    } else if (event.status == "awaiting_clarification") {
-        if (event.clarification) {
-            std::cout << "Question: " << event.clarification->question << std::endl;
+if (event.status == "completed") {
+    for (const auto& item : event.content) {
+        if (item.type == "text") {
+            std::cout << item.text << std::endl;
         }
     }
+} else if (event.status == "failed") {
+    std::cout << "Error: " << event.error.message << std::endl;
+} else if (event.status == "awaiting_clarification") {
+    std::cout << "Question: " << event.clarification.question << std::endl;
 }
 ```
 
-## Testing Locally
+## Building & Testing
 
 ```bash
-cd cpp
 mkdir build && cd build
-cmake ..
-cmake --build .
-ctest
+cmake .. -DBUILD_TESTS=ON
+make
+ctest --output-on-failure
 ```
+
+## Contributing
+
+- Follow C++17 standards
+- Use clang-format for formatting
+- Preserve idempotency header injection
