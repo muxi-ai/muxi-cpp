@@ -55,12 +55,22 @@ public:
     json get_sessions(const std::string& user_id, int limit = -1);
     json get_session(const std::string& session_id, const std::string& user_id);
     json get_session_messages(const std::string& session_id, const std::string& user_id);
+    json restore_session(const std::string& session_id, const std::string& user_id, const json& messages);
+    
+    // Requests
+    json get_requests(const std::string& user_id);
+    json get_request_status(const std::string& request_id, const std::string& user_id);
+    void cancel_request(const std::string& request_id, const std::string& user_id);
     
     // Memory
     json get_memory_config();
     json get_memories(const std::string& user_id, int limit = -1);
     json add_memory(const std::string& user_id, const std::string& type, const std::string& detail);
     void delete_memory(const std::string& user_id, const std::string& memory_id);
+    json get_user_buffer(const std::string& user_id);
+    json clear_user_buffer(const std::string& user_id);
+    json clear_all_buffers();
+    json clear_session_buffer(const std::string& user_id, const std::string& session_id);
     json get_buffer_stats();
     
     // Scheduler
@@ -74,14 +84,31 @@ public:
     json get_async_config();
     json get_a2a_config();
     json get_logging_config();
+    json get_logging_destinations();
     json get_overlord_config();
+    json get_overlord_soul();
     json get_llm_settings();
     
-    // Triggers / Audit
+    // Triggers / SOPs / Audit
     json get_triggers();
     json get_trigger(const std::string& name);
     json fire_trigger(const std::string& name, const json& data, bool is_async = false, const std::string& user_id = "");
+    json get_sops();
+    json get_sop(const std::string& name);
     json get_audit_log();
+    void clear_audit_log();
+    
+    // Credentials
+    json list_credential_services();
+    json list_credentials(const std::string& user_id);
+    json get_credential(const std::string& credential_id, const std::string& user_id);
+    json create_credential(const std::string& user_id, const json& payload);
+    json delete_credential(const std::string& credential_id, const std::string& user_id);
+    
+    // User identifiers
+    json get_user_identifiers(const std::string& user_id);
+    json link_user_identifier(const std::string& muxi_user_id, const json& identifiers);
+    void unlink_user_identifier(const std::string& identifier);
     
     // Streaming
     void stream_events(const std::string& user_id, std::function<void(const SseEvent&)> handler);

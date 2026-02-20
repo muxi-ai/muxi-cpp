@@ -232,6 +232,12 @@ json FormationClient::get_sessions(const std::string& user_id, int limit) {
 }
 json FormationClient::get_session(const std::string& session_id, const std::string& user_id) { return impl_->request("GET", "/sessions/" + session_id, nullptr, false, user_id); }
 json FormationClient::get_session_messages(const std::string& session_id, const std::string& user_id) { return impl_->request("GET", "/sessions/" + session_id + "/messages", nullptr, false, user_id); }
+json FormationClient::restore_session(const std::string& session_id, const std::string& user_id, const json& messages) {
+    return impl_->request("POST", "/sessions/" + session_id + "/restore", {{"messages", messages}}, false, user_id);
+}
+json FormationClient::get_requests(const std::string& user_id) { return impl_->request("GET", "/requests", nullptr, false, user_id); }
+json FormationClient::get_request_status(const std::string& request_id, const std::string& user_id) { return impl_->request("GET", "/requests/" + request_id, nullptr, false, user_id); }
+void FormationClient::cancel_request(const std::string& request_id, const std::string& user_id) { impl_->request("DELETE", "/requests/" + request_id, nullptr, false, user_id); }
 json FormationClient::get_memory_config() { return impl_->request("GET", "/memory", nullptr, true, ""); }
 json FormationClient::get_memories(const std::string& user_id, int limit) {
     std::string path = "/memories?user_id=" + user_id;
@@ -244,6 +250,12 @@ json FormationClient::add_memory(const std::string& user_id, const std::string& 
 void FormationClient::delete_memory(const std::string& user_id, const std::string& memory_id) {
     impl_->request("DELETE", "/memories/" + memory_id + "?user_id=" + user_id, nullptr, false, user_id);
 }
+json FormationClient::get_user_buffer(const std::string& user_id) { return impl_->request("GET", "/memory/buffer?user_id=" + user_id, nullptr, false, ""); }
+json FormationClient::clear_user_buffer(const std::string& user_id) { return impl_->request("DELETE", "/memory/buffer?user_id=" + user_id, nullptr, false, ""); }
+json FormationClient::clear_all_buffers() { return impl_->request("DELETE", "/memory/buffer", nullptr, true, ""); }
+json FormationClient::clear_session_buffer(const std::string& user_id, const std::string& session_id) {
+    return impl_->request("DELETE", "/memory/buffer/" + session_id + "?user_id=" + user_id, nullptr, false, "");
+}
 json FormationClient::get_buffer_stats() { return impl_->request("GET", "/memory/stats", nullptr, true, ""); }
 json FormationClient::get_scheduler_config() { return impl_->request("GET", "/scheduler", nullptr, true, ""); }
 json FormationClient::get_scheduler_jobs(const std::string& user_id) { return impl_->request("GET", "/scheduler/jobs?user_id=" + user_id, nullptr, true, ""); }
@@ -255,7 +267,9 @@ void FormationClient::delete_scheduler_job(const std::string& job_id) { impl_->r
 json FormationClient::get_async_config() { return impl_->request("GET", "/async", nullptr, true, ""); }
 json FormationClient::get_a2a_config() { return impl_->request("GET", "/a2a", nullptr, true, ""); }
 json FormationClient::get_logging_config() { return impl_->request("GET", "/logging", nullptr, true, ""); }
+json FormationClient::get_logging_destinations() { return impl_->request("GET", "/logging/destinations", nullptr, true, ""); }
 json FormationClient::get_overlord_config() { return impl_->request("GET", "/overlord", nullptr, true, ""); }
+json FormationClient::get_overlord_soul() { return impl_->request("GET", "/overlord/soul", nullptr, true, ""); }
 json FormationClient::get_llm_settings() { return impl_->request("GET", "/llm/settings", nullptr, true, ""); }
 json FormationClient::get_triggers() { return impl_->request("GET", "/triggers", nullptr, false, ""); }
 json FormationClient::get_trigger(const std::string& name) { return impl_->request("GET", "/triggers/" + name, nullptr, false, ""); }
@@ -263,7 +277,20 @@ json FormationClient::fire_trigger(const std::string& name, const json& data, bo
     std::string path = "/triggers/" + name + "?async=" + (is_async ? "true" : "false");
     return impl_->request("POST", path, data, false, user_id);
 }
+json FormationClient::get_sops() { return impl_->request("GET", "/sops", nullptr, false, ""); }
+json FormationClient::get_sop(const std::string& name) { return impl_->request("GET", "/sops/" + name, nullptr, false, ""); }
 json FormationClient::get_audit_log() { return impl_->request("GET", "/audit", nullptr, true, ""); }
+void FormationClient::clear_audit_log() { impl_->request("DELETE", "/audit?confirm=clear-audit-log", nullptr, true, ""); }
+json FormationClient::list_credential_services() { return impl_->request("GET", "/credentials/services", nullptr, true, ""); }
+json FormationClient::list_credentials(const std::string& user_id) { return impl_->request("GET", "/credentials", nullptr, false, user_id); }
+json FormationClient::get_credential(const std::string& credential_id, const std::string& user_id) { return impl_->request("GET", "/credentials/" + credential_id, nullptr, false, user_id); }
+json FormationClient::create_credential(const std::string& user_id, const json& payload) { return impl_->request("POST", "/credentials", payload, false, user_id); }
+json FormationClient::delete_credential(const std::string& credential_id, const std::string& user_id) { return impl_->request("DELETE", "/credentials/" + credential_id, nullptr, false, user_id); }
+json FormationClient::get_user_identifiers(const std::string& user_id) { return impl_->request("GET", "/users/identifiers/" + user_id, nullptr, true, ""); }
+json FormationClient::link_user_identifier(const std::string& muxi_user_id, const json& identifiers) {
+    return impl_->request("POST", "/users/identifiers", {{"muxi_user_id", muxi_user_id}, {"identifiers", identifiers}}, true, "");
+}
+void FormationClient::unlink_user_identifier(const std::string& identifier) { impl_->request("DELETE", "/users/identifiers/" + identifier, nullptr, true, ""); }
 void FormationClient::stream_events(const std::string& user_id, std::function<void(const SseEvent&)> handler) {
     impl_->stream_sse("GET", "/events?user_id=" + user_id, nullptr, false, user_id, handler);
 }
