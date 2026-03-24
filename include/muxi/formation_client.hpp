@@ -79,6 +79,9 @@ public:
     json get_scheduler_job(const std::string& job_id);
     json create_scheduler_job(const std::string& type, const std::string& schedule, const std::string& message, const std::string& user_id);
     void delete_scheduler_job(const std::string& job_id);
+    json update_scheduler_job(const std::string& job_id, const json& updates);
+    json pause_scheduler_job(const std::string& job_id);
+    json resume_scheduler_job(const std::string& job_id);
     
     // Config endpoints
     json get_async_config();

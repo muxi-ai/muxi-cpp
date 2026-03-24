@@ -264,6 +264,9 @@ json FormationClient::create_scheduler_job(const std::string& type, const std::s
     return impl_->request("POST", "/scheduler/jobs", {{"type", type}, {"schedule", schedule}, {"message", message}, {"user_id", user_id}}, true, "");
 }
 void FormationClient::delete_scheduler_job(const std::string& job_id) { impl_->request("DELETE", "/scheduler/jobs/" + job_id, nullptr, true, ""); }
+json FormationClient::update_scheduler_job(const std::string& job_id, const json& updates) { return impl_->request("PUT", "/scheduler/jobs/" + job_id, updates, true, ""); }
+json FormationClient::pause_scheduler_job(const std::string& job_id) { return impl_->request("POST", "/scheduler/jobs/" + job_id + "/pause", nullptr, true, ""); }
+json FormationClient::resume_scheduler_job(const std::string& job_id) { return impl_->request("POST", "/scheduler/jobs/" + job_id + "/resume", nullptr, true, ""); }
 json FormationClient::get_async_config() { return impl_->request("GET", "/async", nullptr, true, ""); }
 json FormationClient::get_a2a_config() { return impl_->request("GET", "/a2a", nullptr, true, ""); }
 json FormationClient::get_logging_config() { return impl_->request("GET", "/logging", nullptr, true, ""); }
