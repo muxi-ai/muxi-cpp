@@ -3,6 +3,7 @@
 #include "muxi/version.hpp"
 #include "muxi/version_check.hpp"
 #include <curl/curl.h>
+#include <exception>
 #include <sstream>
 #include <random>
 #include <unordered_map>
@@ -27,6 +28,37 @@ static std::string generate_uuid() {
 static size_t write_callback(void* contents, size_t size, size_t nmemb, std::string* userp) {
     userp->append(static_cast<char*>(contents), size * nmemb);
     return size * nmemb;
+}
+
+struct StreamContext {
+    detail::SseEventParser parser;
+    std::function<void(const SseEvent&)> handler;
+    std::string buffer;
+    std::exception_ptr error;
+};
+
+static size_t sse_write_callback(void* contents, size_t size, size_t nmemb, StreamContext* ctx) {
+    const size_t total = size * nmemb;
+    ctx->buffer.append(static_cast<char*>(contents), total);
+
+    try {
+        size_t newline = 0;
+        while ((newline = ctx->buffer.find('\n')) != std::string::npos) {
+            std::string line = ctx->buffer.substr(0, newline);
+            ctx->buffer.erase(0, newline + 1);
+            if (!line.empty() && line.back() == '\r') {
+                line.pop_back();
+            }
+            if (auto event = ctx->parser.process_line(line)) {
+                ctx->handler(*event);
+            }
+        }
+    } catch (...) {
+        ctx->error = std::current_exception();
+        return 0;
+    }
+
+    return total;
 }
 
 static size_t header_callback(char* buffer, size_t size, size_t nitems, std::unordered_map<std::string, std::string>* headers) {
@@ -127,12 +159,12 @@ public:
         if (!curl) return;
         
         std::string url = base_url_ + path;
-        std::string response_body;
+        StreamContext stream_ctx{detail::SseEventParser{}, std::move(handler), "", nullptr};
         
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_TIMEOUT, 0L);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_body);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, sse_write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &stream_ctx);
         
         struct curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("X-Muxi-SDK: cpp/" + VERSION).c_str());
@@ -151,28 +183,26 @@ public:
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         if (method == "POST") curl_easy_setopt(curl, CURLOPT_POST, 1L);
         
-        curl_easy_perform(curl);
+        CURLcode result = curl_easy_perform(curl);
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
-        
-        std::istringstream stream(response_body);
-        std::string line, current_event;
-        std::vector<std::string> data_parts;
-        while (std::getline(stream, line)) {
-            if (!line.empty() && line.back() == '\r') line.pop_back();
-            if (line.empty()) {
-                if (!data_parts.empty()) {
-                    std::string data;
-                    for (size_t i = 0; i < data_parts.size(); i++) { if (i > 0) data += "\n"; data += data_parts[i]; }
-                    handler(SseEvent{current_event.empty() ? "message" : current_event, data});
-                    data_parts.clear();
-                }
-                current_event.clear();
-                continue;
+
+        if (stream_ctx.error) {
+            std::rethrow_exception(stream_ctx.error);
+        }
+        if (!stream_ctx.buffer.empty()) {
+            if (!stream_ctx.buffer.empty() && stream_ctx.buffer.back() == '\r') {
+                stream_ctx.buffer.pop_back();
             }
-            if (line[0] == ':') continue;
-            if (line.rfind("event:", 0) == 0) { current_event = line.substr(6); while (!current_event.empty() && current_event[0] == ' ') current_event.erase(0, 1); }
-            else if (line.rfind("data:", 0) == 0) { std::string d = line.substr(5); while (!d.empty() && d[0] == ' ') d.erase(0, 1); data_parts.push_back(d); }
+            if (auto event = stream_ctx.parser.process_line(stream_ctx.buffer)) {
+                stream_ctx.handler(*event);
+            }
+        }
+        if (auto event = stream_ctx.parser.flush()) {
+            stream_ctx.handler(*event);
+        }
+        if (result != CURLE_OK) {
+            throw ConnectionException(curl_easy_strerror(result));
         }
     }
     
@@ -308,6 +338,68 @@ void FormationClient::stream_logs(const json& filters, std::function<void(const 
 }
 json FormationClient::resolve_user(const std::string& identifier, bool create_user) {
     return impl_->request("POST", "/users/resolve", {{"identifier", identifier}, {"create_user", create_user}}, false, "");
+}
+
+std::optional<SseEvent> detail::SseEventParser::process_line(const std::string& line) {
+    if (!line.empty() && line.front() == ':') {
+        return std::nullopt;
+    }
+    if (line.empty()) {
+        return flush();
+    }
+
+    auto colon = line.find(':');
+    std::string field = colon == std::string::npos ? line : line.substr(0, colon);
+    std::string value = colon == std::string::npos ? "" : line.substr(colon + 1);
+    if (!value.empty() && value.front() == ' ') {
+        value.erase(0, 1);
+    }
+
+    if (field == "event") {
+        current_event_ = value;
+    } else if (field == "data") {
+        data_parts_.push_back(value);
+    }
+
+    return std::nullopt;
+}
+
+std::optional<SseEvent> detail::SseEventParser::flush() {
+    if (current_event_.empty() && data_parts_.empty()) {
+        return std::nullopt;
+    }
+
+    std::string data;
+    for (size_t i = 0; i < data_parts_.size(); ++i) {
+        if (i > 0) {
+            data += "\n";
+        }
+        data += data_parts_[i];
+    }
+
+    SseEvent event{current_event_.empty() ? "message" : current_event_, data};
+    current_event_.clear();
+    data_parts_.clear();
+
+    if (event.event == "error") {
+        std::string code = "STREAM_ERROR";
+        std::string message = event.data.empty() ? "stream error" : event.data;
+        try {
+            auto payload = json::parse(event.data);
+            if (payload.is_object()) {
+                if (payload.contains("type")) code = payload["type"].get<std::string>();
+                else if (payload.contains("code")) code = payload["code"].get<std::string>();
+                else if (payload.contains("error")) code = payload["error"].get<std::string>();
+
+                if (payload.contains("error")) message = payload["error"].get<std::string>();
+                else if (payload.contains("message")) message = payload["message"].get<std::string>();
+            }
+        } catch (...) {
+        }
+        throw MuxiException(code, message, 0);
+    }
+
+    return event;
 }
 
 } // namespace muxi

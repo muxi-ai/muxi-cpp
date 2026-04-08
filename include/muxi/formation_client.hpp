@@ -3,6 +3,8 @@
 #include <string>
 #include <functional>
 #include <optional>
+#include <vector>
+#include <optional>
 #include <nlohmann/json.hpp>
 #include "server_client.hpp"
 
@@ -124,5 +126,19 @@ private:
     class Impl;
     std::unique_ptr<Impl> impl_;
 };
+
+namespace detail {
+
+class SseEventParser {
+public:
+    std::optional<SseEvent> process_line(const std::string& line);
+    std::optional<SseEvent> flush();
+
+private:
+    std::string current_event_;
+    std::vector<std::string> data_parts_;
+};
+
+} // namespace detail
 
 } // namespace muxi
