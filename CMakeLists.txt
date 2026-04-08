@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(muxi VERSION 0.20260324.0)
+project(muxi VERSION 0.20260408.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
