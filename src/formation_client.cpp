@@ -208,18 +208,7 @@ public:
     
 private:
     json unwrap_envelope(const json& obj) {
-        if (obj.is_object() && obj.contains("data")) {
-            auto data = obj["data"];
-            if (data.is_object()) {
-                json result = data;
-                if (obj.contains("request") && obj["request"].is_object() && obj["request"].contains("id")) {
-                    if (!result.contains("request_id")) result["request_id"] = obj["request"]["id"];
-                }
-                return result;
-            }
-            return data;
-        }
-        return obj;
+        return detail::unwrap_envelope(obj);
     }
     
     std::string base_url_;
@@ -400,6 +389,35 @@ std::optional<SseEvent> detail::SseEventParser::flush() {
     }
 
     return event;
+}
+
+json detail::unwrap_envelope(const json& obj) {
+    if (obj.is_object() && obj.contains("data")) {
+        auto data = obj["data"];
+        if (data.is_object()) {
+            json result = data;
+            if (obj.contains("request") && obj["request"].is_object()) {
+                const auto& req = obj["request"];
+                if (req.contains("id") && !result.contains("request_id")) result["request_id"] = req["id"];
+                if (req.contains("idempotency_key") && !result.contains("idempotency_key")) result["idempotency_key"] = req["idempotency_key"];
+            }
+            return result;
+        }
+        return data;
+    }
+    return obj;
+}
+
+json parse_ui_widgets(const SseEvent& event) {
+    if (event.event != "ui") return json::array();
+    try {
+        auto parsed = json::parse(event.data);
+        if (parsed.is_object() && parsed.contains("ui") && parsed["ui"].is_array()) {
+            return parsed["ui"];
+        }
+    } catch (const json::parse_error&) {
+    }
+    return json::array();
 }
 
 } // namespace muxi

@@ -127,6 +127,14 @@ private:
     std::unique_ptr<Impl> impl_;
 };
 
+// Widgets from an `event: ui` stream frame; an empty array for other frames.
+//
+// The runtime delivers the response envelope's optional `ui` array (options,
+// action_link, mcp_resource widgets) as a single `event: ui` SSE frame before
+// `event: done`. Unknown widget types should be ignored (progressive
+// enhancement).
+json parse_ui_widgets(const SseEvent& event);
+
 namespace detail {
 
 class SseEventParser {
@@ -138,6 +146,8 @@ private:
     std::string current_event_;
     std::vector<std::string> data_parts_;
 };
+
+json unwrap_envelope(const json& obj);
 
 } // namespace detail
 
